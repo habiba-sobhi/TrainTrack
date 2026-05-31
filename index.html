@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrainTrack — Call Center Training System</title>
+<style>
+/* ── RESET & BASE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f0f2f5;
+  color: #1a1a2e;
+  display: flex;
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 230px;
+  background: #1a1a2e;
+  min-height: 100vh;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+.logo-area {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.logo-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+.logo-title span { color: #4e8ef7; }
+.logo-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 3px;
+}
+nav { flex: 1; padding: 14px 10px; }
+.nav-section {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.3);
+  padding: 10px 10px 4px;
+}
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 13.5px;
+  text-align: left;
+  transition: all 0.15s;
+  margin-bottom: 2px;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.nav-btn.active { background: rgba(78,142,247,0.18); color: #4e8ef7; }
+.nav-icon { font-size: 16px; width: 18px; text-align: center; }
+.sidebar-footer {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.trainer-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.trainer-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4e8ef7, #7b5ea7);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; color: #fff;
+}
+.trainer-name { font-size: 12px; font-weight: 600; color: #fff; }
+.trainer-role { font-size: 10px; color: rgba(255,255,255,0.4); }
+
+/* ── MAIN CONTENT ── */
+.main { margin-left: 230px; flex: 1; display: flex; flex-direction: column; }
+.topbar {
+  background: #fff;
+  padding: 0 28px;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e8ecf0;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.page-title { font-size: 17px; font-weight: 700; }
+.page-sub { font-size: 12px; color: #8a92a0; margin-top: 1px; }
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #dde2ea;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.btn:hover { background: #f5f7fa; }
+.btn-primary {
+  background: #4e8ef7;
+  border-color: #4e8ef7;
+  color: #fff;
+  font-weight: 600;
+}
+.btn-primary:hover { background: #3a7ae4; border-color: #3a7ae4; }
+.btn-danger { background: #e85d5d; border-color: #e85d5d; color: #fff; }
+.content { padding: 28px; flex: 1; }
+
+/* ── STATS ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 26px;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e8ecf0;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.stat-card.blue::before  { background: #4e8ef7; }
+.stat-card.green::before { background: #2dba8c; }
+.stat-card.teal::before  { background: #4fc4cf; }
+.stat-card.red::before   { background: #e85d5d; }
+.stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #8a92a0; margin-bottom: 8px; }
+.stat-value { font-size: 34px; font-weight: 800; letter-spacing: -1px; }
+.stat-card.blue  .stat-value  { color: #4e8ef7; }
+.stat-card.green .stat-value  { color: #2dba8c; }
+.stat-card.teal  .stat-value  { color: #4fc4cf; }
+.stat-card.red   .stat-value  { color: #e85d5d; }
+.stat-sub { font-size: 11px; color: #b0b8c4; margin-top: 4px; }
+
+/* ── ALERT ── */
+.alert {
+  background: #fff8e6;
+  border: 1px solid #f5c842;
+  border-left: 4px solid #f5c842;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 22px;
+  display: none;
+}
+.alert.show { display: flex; gap: 12px; }
+.alert-body { font-size: 13px; line-height: 1.6; color: #7a5c00; }
+.alert-body strong { display: block; margin-bottom: 4px; }
+
+/* ── SECTION HEADER ── */
+.sec-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.sec-title { font-size: 14px; font-weight: 700; }
+
+/* ── FILTERS ── */
+.filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.filter-input {
+  background: #fff;
+  border: 1px solid #dde2ea;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #1a1a2e;
+  outline: none;
+  transition: border 0.15s;
+}
+.filter-input:focus { border-color: #4e8ef7; }
+.filter-input::placeholder { color: #b0b8c4; }
+
+/* ── TABLE ── */
+.table-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8ecf0;
+  overflow: hidden;
+}
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  background: #f7f9fc;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: #8a92a0;
+  font-weight: 600;
+  border-bottom: 1px solid #e8ecf0;
+  white-space: nowrap;
+}
+.data-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f0f2f5;
+  vertical-align: middle;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: #f9fbff; }
+.mono { font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 12px; color: #8a92a0; }
+.name-cell { font-weight: 600; }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+.badge-active     { background: #e6f9f3; color: #1a7a5a; }
+.badge-active::before { background: #2dba8c; }
+.badge-terminated { background: #fdf0f0; color: #a32020; }
+.badge-terminated::before { background: #e85d5d; }
+.badge-nesting    { background: #e6f6f8; color: #1a7280; }
+.badge-nesting::before { background: #4fc4cf; }
+.badge-employee   { background: #e8f0ff; color: #1a3f9a; }
+.badge-employee::before { background: #4e8ef7; }
+.badge-pass { background: #e6f9f3; color: #1a7a5a; padding: 2px 8px; font-size: 11px; }
+.badge-fail { background: #fdf0f0; color: #a32020; padding: 2px 8px; font-size: 11px; }
+
+/* ── RISK DOTS ── */
+.risk-dots { display: flex; gap: 4px; align-items: center; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: #e8ecf0; }
+.dot.abs  { background: #e85d5d; }
+.dot.quiz { background: #f5a623; }
+.dot.rp   { background: #7b5ea7; }
+.risk-text { font-size: 11px; color: #b0b8c4; margin-left: 4px; }
+
+/* ── ACTION BTNS ── */
+.act-btns { display: flex; gap: 5px; }
+.icon-btn {
+  width: 30px; height: 30px;
+  border-radius: 6px;
+  border: 1px solid #dde2ea;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.icon-btn:hover { background: #f0f2f5; }
+.icon-btn.del:hover { background: #fdf0f0; border-color: #e85d5d; color: #e85d5d; }
+
+/* ── VIEWS ── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ── TABS ── */
+.tabs-bar {
+  display: flex;
+  gap: 2px;
+  background: #f0f2f5;
+  border-radius: 8px;
+  padding: 3px;
+  width: fit-content;
+  margin-bottom: 16px;
+}
+.tab-btn {
+  padding: 6px 16px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  color: #8a92a0;
+  transition: all 0.15s;
+}
+.tab-btn.active { background: #fff; color: #1a1a2e; font-weight: 600; }
+
+/* ── MODAL ── */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+}
+.overlay.open { display: flex; }
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  width: 480px;
+  max-width: 95vw;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+  animation: popIn 0.2s ease;
+}
+@keyframes popIn {
+  from { opacity:0; transform:translateY(10px) scale(0.98); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+.modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1/-1; }
+.form-label { font-size: 12px; font-weight: 600; color: #8a92a0; }
+.form-input {
+  background: #f7f9fc;
+  border: 1px solid #dde2ea;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border 0.15s;
+}
+.form-input:focus { border-color: #4e8ef7; background: #fff; }
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
+
+/* ── EMPTY STATE ── */
+.empty { text-align: center; padding: 50px; color: #b0b8c4; }
+.empty-icon { font-size: 36px; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="logo-area">
+    <div class="logo-title">Train<span>Track</span></div>
+    <div class="logo-sub">Call Center Training System</div>
+  </div>
+
+  <nav>
+    <div class="nav-section">Overview</div>
+    <button class="nav-btn active" onclick="showView('dashboard')">
+      <span class="nav-icon">⊞</span> Dashboard
+    </button>
+
+    <div class="nav-section">Management</div>
+    <button class="nav-btn" onclick="showView('trainees')">
+      <span class="nav-icon">👤</span> Trainees
+    </button>
+    <button class="nav-btn" onclick="showView('batches')">
+      <span class="nav-icon">📋</span> Batches
+    </button>
+    <button class="nav-btn" onclick="showView('attendance')">
+      <span class="nav-icon">✓</span> Attendance
+    </button>
+
+    <div class="nav-section">Performance</div>
+    <button class="nav-btn" onclick="showView('quizzes')">
+      <span class="nav-icon">📝</span> Quizzes
+    </button>
+    <button class="nav-btn" onclick="showView('roleplays')">
+      <span class="nav-icon">💬</span> Role Plays
+    </button>
+    <button class="nav-btn" onclick="showView('testcalls')">
+      <span class="nav-icon">📞</span> Test Calls
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="trainer-chip">
+      <div class="trainer-avatar">SH</div>
+      <div>
+        <div class="trainer-name">Sara Hassan</div>
+        <div class="trainer-role">Senior Trainer</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <div class="topbar">
+    <div>
+      <div class="page-title" id="page-title">Dashboard</div>
+      <div class="page-sub"  id="page-sub">Training overview and alerts</div>
+    </div>
+    <button class="btn btn-primary" onclick="openAdd()">+ Add Trainee</button>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div id="view-dashboard" class="view active">
+      <div class="stats-row">
+        <div class="stat-card blue">
+          <div class="stat-label">Total Trainees</div>
+          <div class="stat-value" id="s-total">0</div>
+          <div class="stat-sub">Across all batches</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Active</div>
+          <div class="stat-value" id="s-active">0</div>
+          <div class="stat-sub">Currently in training</div>
+        </div>
+        <div class="stat-card teal">
+          <div class="stat-label">Nesting</div>
+          <div class="stat-value" id="s-nesting">0</div>
+          <div class="stat-sub">Passed, on the floor</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-label">Terminated</div>
+          <div class="stat-value" id="s-terminated">0</div>
+          <div class="stat-sub">Did not complete</div>
+        </div>
+      </div>
+
+      <div class="alert" id="alert-box">
+        <div style="font-size:20px">⚠️</div>
+        <div class="alert-body">
+          <strong>Trainees close to termination (2 absences)</strong>
+          <div id="alert-list"></div>
+        </div>
+      </div>
+
+      <div class="sec-hdr">
+        <div class="sec-title">All Trainees — Performance Overview</div>
+      </div>
+      <div class="table-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Biometric ID</th>
+              <th>Name</th>
+              <th>Batch</th>
+              <th>Dept</th>
+              <th>Absences</th>
+              <th>Quiz Fails</th>
+              <th>RP Fails</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="dash-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ TRAINEES ══ -->
+    <div id="view-trainees" class="view">
+      <div class="filters">
+        <input class="filter-input" id="f-name" placeholder="Search name or ID…" style="width:210px" oninput="renderTrainees()">
+        <select class="filter-input" id="f-status" onchange="renderTrainees()">
+          <option value="">All statuses</option>
+          <option>Active</option><option>Terminated</option>
+          <option>Nesting</option><option>Employee</option>
+        </select>
+        <select class="filter-input" id="f-batch" onchange="renderTrainees()">
+          <option value="">All batches</option>
+        </select>
+        <select class="filter-input" id="f-dept" onchange="renderTrainees()">
+          <option value="">All departments</option>
+        </select>
+      </div>
+      <div class="table-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Biometric ID</th><th>Full Name</th>
+              <th>Batch</th><th>Department</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="trainee-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ BATCHES ══ -->
+    <div id="view-batches" class="view">
+      <div class="table-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Batch Name</th><th>Department</th><th>Trainer</th>
+              <th>Start Date</th><th>End Date</th><th>Duration</th><th>Trainees</th>
+            </tr>
+          </thead>
+          <tbody id="batch-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ ATTENDANCE ══ -->
+    <div id="view-attendance" class="view">
+      <div class="filters">
+        <select class="filter-input" id="af-trainee" onchange="renderAttendance()">
+          <option value="">All trainees</option>
+        </select>
+        <select class="filter-input" id="af-status" onchange="renderAttendance()">
+          <option value="">All statuses</option>
+          <option>Present</option><option>Absent</option>
+          <option>Late</option><option>Excused</option>
+        </select>
+      </div>
+      <div class="table-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th><th>Trainee</th><th>Biometric ID</th>
+              <th>Batch</th><th>Status</th><th>Running Absences</th>
+            </tr>
+          </thead>
+          <tbody id="att-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ QUIZZES ══ -->
+    <div id="view-quizzes" class="view">
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="switchTab('q','quiz-defs')">Quizzes</button>
+        <button class="tab-btn" onclick="switchTab('q','quiz-attempts')">Attempts</button>
+      </div>
+      <div id="q-quiz-defs" class="table-card">
+        <table class="data-table">
+          <thead><tr><th>Quiz Name</th><th>Batch</th><th>Date</th><th>Pass Score</th></tr></thead>
+          <tbody id="quiz-def-tbody"></tbody>
+        </table>
+      </div>
+      <div id="q-quiz-attempts" style="display:none" class="table-card">
+        <table class="data-table">
+          <thead><tr><th>Trainee</th><th>Quiz</th><th>Score</th><th>Result</th></tr></thead>
+          <tbody id="quiz-att-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ ROLE PLAYS ══ -->
+    <div id="view-roleplays" class="view">
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="switchTab('r','rp-defs')">Role Plays</button>
+        <button class="tab-btn" onclick="switchTab('r','rp-attempts')">Attempts</button>
+      </div>
+      <div id="r-rp-defs" class="table-card">
+        <table class="data-table">
+          <thead><tr><th>Role Play Name</th><th>Batch</th><th>Date</th></tr></thead>
+          <tbody id="rp-def-tbody"></tbody>
+        </table>
+      </div>
+      <div id="r-rp-attempts" style="display:none" class="table-card">
+        <table class="data-table">
+          <thead><tr><th>Trainee</th><th>Role Play</th><th>Result</th><th>Feedback</th></tr></thead>
+          <tbody id="rp-att-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ TEST CALLS ══ -->
+    <div id="view-testcalls" class="view">
+      <div class="table-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Trainee</th><th>Attempt #</th><th>Date</th>
+              <th>Result</th><th>Fail Reason</th>
+            </tr>
+          </thead>
+          <tbody id="tc-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<!-- ══ ADD / EDIT MODAL ══ -->
+<div class="overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Add New Trainee</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <div class="form-label">Biometric ID</div>
+        <input class="form-input" id="m-bio" placeholder="e.g. BIO-10015">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Batch</div>
+        <select class="form-input" id="m-batch"></select>
+      </div>
+      <div class="form-group">
+        <div class="form-label">First Name</div>
+        <input class="form-input" id="m-first" placeholder="First name">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Last Name</div>
+        <input class="form-input" id="m-last" placeholder="Last name">
+      </div>
+      <div class="form-group full">
+        <div class="form-label">Status</div>
+        <select class="form-input" id="m-status">
+          <option>Active</option><option>Nesting</option>
+          <option>Employee</option><option>Terminated</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTrainee()" id="save-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA  (mirrors your SQL sample data exactly)
+// ═══════════════════════════════════════════════════════
+const DB = {
+  departments: [
+    {id:1, name:'CSR',                   weeks:4},
+    {id:2, name:'TSR',                   weeks:3},
+    {id:3, name:'Non-pay',               weeks:3},
+    {id:4, name:'Retention Mobile',      weeks:3},
+    {id:5, name:'Retention Residential', weeks:4},
+  ],
+  trainers: [
+    {id:1, name:'Sara Hassan'},
+    {id:2, name:'Ahmed Mostafa'},
+    {id:3, name:'Nour Ibrahim'},
+  ],
+  batches: [
+    {id:1, name:'CSR-B01-2025',  start:'2025-01-06', end:'2025-02-02', trainer_id:1, dept_id:1},
+    {id:2, name:'TSR-B01-2025',  start:'2025-01-06', end:'2025-01-26', trainer_id:2, dept_id:2},
+    {id:3, name:'NONPAY-B01',    start:'2025-02-03', end:'2025-02-23', trainer_id:1, dept_id:3},
+    {id:4, name:'RET-MOB-B01',   start:'2025-02-03', end:'2025-02-23', trainer_id:3, dept_id:4},
+    {id:5, name:'RET-RES-B01',   start:'2025-03-03', end:'2025-03-30', trainer_id:2, dept_id:5},
+  ],
+  trainees: [
+    {id:1,  bio:'BIO-10001', first:'Layla',   last:'Khaled',  batch_id:1, status:'Active'},
+    {id:2,  bio:'BIO-10002', first:'Omar',    last:'Samir',   batch_id:1, status:'Active'},
+    {id:3,  bio:'BIO-10003', first:'Yasmine', last:'Ali',     batch_id:1, status:'Terminated'},
+    {id:4,  bio:'BIO-10004', first:'Karim',   last:'Farouk',  batch_id:1, status:'Nesting'},
+    {id:5,  bio:'BIO-10005', first:'Dina',    last:'Tawfik',  batch_id:1, status:'Active'},
+    {id:6,  bio:'BIO-20001', first:'Hassan',  last:'Mostafa', batch_id:2, status:'Terminated'},
+    {id:7,  bio:'BIO-20002', first:'Mariam',  last:'Sayed',   batch_id:2, status:'Terminated'},
+    {id:8,  bio:'BIO-20003', first:'Tarek',   last:'Nasser',  batch_id:2, status:'Active'},
+    {id:9,  bio:'BIO-30001', first:'Hana',    last:'Aziz',    batch_id:3, status:'Active'},
+    {id:10, bio:'BIO-30002', first:'Youssef', last:'Fathy',   batch_id:3, status:'Active'},
+  ],
+  attendance: [
+    {id:1,  tid:1, date:'2025-01-06', status:'Present'},
+    {id:2,  tid:1, date:'2025-01-07', status:'Present'},
+    {id:3,  tid:1, date:'2025-01-08', status:'Absent'},
+    {id:4,  tid:2, date:'2025-01-06', status:'Present'},
+    {id:5,  tid:2, date:'2025-01-07', status:'Late'},
+    {id:6,  tid:2, date:'2025-01-08', status:'Absent'},
+    {id:7,  tid:2, date:'2025-01-09', status:'Absent'},
+    {id:8,  tid:3, date:'2025-01-06', status:'Absent'},
+    {id:9,  tid:3, date:'2025-01-07', status:'Absent'},
+    {id:10, tid:3, date:'2025-01-08', status:'Absent'},
+    {id:11, tid:4, date:'2025-01-06', status:'Present'},
+    {id:12, tid:4, date:'2025-01-07', status:'Present'},
+    {id:13, tid:5, date:'2025-01-06', status:'Present'},
+    {id:14, tid:6, date:'2025-01-06', status:'Present'},
+    {id:15, tid:7, date:'2025-01-06', status:'Absent'},
+    {id:16, tid:7, date:'2025-01-07', status:'Absent'},
+    {id:17, tid:8, date:'2025-01-06', status:'Present'},
+    {id:18, tid:9, date:'2025-02-03', status:'Present'},
+    {id:19, tid:10,date:'2025-02-03', status:'Present'},
+  ],
+  quizzes: [
+    {id:1, batch_id:1, name:'Product Knowledge Q1', date:'2025-01-10', pass_score:60},
+    {id:2, batch_id:1, name:'System Navigation Q1',  date:'2025-01-17', pass_score:60},
+    {id:3, batch_id:1, name:'Compliance Quiz',        date:'2025-01-24', pass_score:70},
+    {id:4, batch_id:2, name:'TSR Product Quiz',       date:'2025-01-10', pass_score:60},
+    {id:5, batch_id:2, name:'TSR Policy Quiz',        date:'2025-01-17', pass_score:60},
+  ],
+  quiz_attempts: [
+    {id:1,  tid:1, qid:1, score:82, result:'Pass'},
+    {id:2,  tid:1, qid:2, score:75, result:'Pass'},
+    {id:3,  tid:1, qid:3, score:65, result:'Pass'},
+    {id:4,  tid:2, qid:1, score:55, result:'Fail'},
+    {id:5,  tid:2, qid:2, score:50, result:'Fail'},
+    {id:6,  tid:4, qid:1, score:90, result:'Pass'},
+    {id:7,  tid:4, qid:2, score:88, result:'Pass'},
+    {id:8,  tid:6, qid:4, score:72, result:'Pass'},
+    {id:9,  tid:7, qid:4, score:40, result:'Fail'},
+    {id:10, tid:7, qid:5, score:35, result:'Fail'},
+    {id:11, tid:8, qid:4, score:78, result:'Pass'},
+    {id:12, tid:8, qid:5, score:81, result:'Pass'},
+  ],
+  role_plays: [
+    {id:1, batch_id:1, name:'Billing Complaint RP',  date:'2025-01-14'},
+    {id:2, batch_id:1, name:'Upgrade Offer RP',      date:'2025-01-21'},
+    {id:3, batch_id:1, name:'Cancellation Save RP',  date:'2025-01-28'},
+    {id:4, batch_id:2, name:'TSR Pitch RP',          date:'2025-01-14'},
+    {id:5, batch_id:2, name:'Objection Handling RP', date:'2025-01-21'},
+  ],
+  rp_attempts: [
+    {id:1,  tid:1, rpid:1, result:'Pass', feedback:'Good empathy, strong close.'},
+    {id:2,  tid:1, rpid:2, result:'Pass', feedback:'Excellent product knowledge.'},
+    {id:3,  tid:1, rpid:3, result:'Pass', feedback:'Met all criteria.'},
+    {id:4,  tid:2, rpid:1, result:'Fail', feedback:'Rushed through steps.'},
+    {id:5,  tid:4, rpid:1, result:'Pass', feedback:'Outstanding performance.'},
+    {id:6,  tid:4, rpid:2, result:'Pass', feedback:'Very confident delivery.'},
+    {id:7,  tid:6, rpid:4, result:'Pass', feedback:'Good pitch structure.'},
+    {id:8,  tid:7, rpid:4, result:'Fail', feedback:'Did not follow script.'},
+    {id:9,  tid:8, rpid:4, result:'Pass', feedback:'Strong opener and close.'},
+    {id:10, tid:8, rpid:5, result:'Pass', feedback:'Handled objection professionally.'},
+  ],
+  test_calls: [
+    {id:1, tid:4, attempt:1, result:'Pass', reason:null,       date:'2025-01-31'},
+    {id:2, tid:1, attempt:1, result:'Fail', reason:'Language', date:'2025-01-31'},
+    {id:3, tid:1, attempt:2, result:'Pass', reason:null,       date:'2025-02-01'},
+    {id:4, tid:6, attempt:1, result:'Fail', reason:'Quality',  date:'2025-01-24'},
+    {id:5, tid:6, attempt:2, result:'Fail', reason:'Both',     date:'2025-01-25'},
+    {id:6, tid:6, attempt:3, result:'Fail', reason:'Quality',  date:'2025-01-26'},
+  ],
+  nextId: 11,
+};
+
+// ═══ HELPERS ═══
+const getDept   = id => DB.departments.find(d=>d.id===id)||{};
+const getTrainer= id => DB.trainers.find(t=>t.id===id)||{};
+const getBatch  = id => DB.batches.find(b=>b.id===id)||{};
+const getTrainee= id => DB.trainees.find(t=>t.id===id)||{};
+const getQuiz   = id => DB.quizzes.find(q=>q.id===id)||{};
+const getRP     = id => DB.role_plays.find(r=>r.id===id)||{};
+
+const absCount  = id => DB.attendance.filter(a=>a.tid===id&&a.status==='Absent').length;
+const quizFails = id => DB.quiz_attempts.filter(a=>a.tid===id&&a.result==='Fail').length;
+const rpFails   = id => DB.rp_attempts.filter(a=>a.tid===id&&a.result==='Fail').length;
+
+function dots(count, cls, max=3) {
+  return Array.from({length:max},(_,i)=>`<div class="dot${i<count?' '+cls:''}"></div>`).join('');
+}
+function badge(status) {
+  const map = {Active:'active',Terminated:'terminated',Nesting:'nesting',Employee:'employee'};
+  return `<span class="badge badge-${map[status]||'active'}">${status}</span>`;
+}
+function resBadge(r) {
+  return `<span class="badge badge-${r==='Pass'?'pass':'fail'}">${r}</span>`;
+}
+
+// ═══ NAVIGATION ═══
+const titles = {
+  dashboard:  ['Dashboard',   'Training overview and alerts'],
+  trainees:   ['Trainees',    'Search, filter and manage trainees'],
+  batches:    ['Batches',     'All training groups'],
+  attendance: ['Attendance',  'Daily attendance records'],
+  quizzes:    ['Quizzes',     'Quiz definitions and scores'],
+  roleplays:  ['Role Plays',  'Role play sessions and results'],
+  testcalls:  ['Test Calls',  'Final test call attempts'],
+};
+const renders = {
+  dashboard: renderDashboard,
+  trainees:  renderTrainees,
+  batches:   renderBatches,
+  attendance:renderAttendance,
+  quizzes:   renderQuizzes,
+  roleplays: renderRolePlays,
+  testcalls: renderTestCalls,
+};
+
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelector(`[onclick="showView('${name}')"]`).classList.add('active');
+  document.getElementById('page-title').textContent = titles[name][0];
+  document.getElementById('page-sub').textContent   = titles[name][1];
+  renders[name]?.();
+}
+
+function switchTab(prefix, tabId) {
+  const view = document.getElementById('view-'+
+    (prefix==='q'?'quizzes':prefix==='r'?'roleplays':''));
+  view.querySelectorAll('[id^="'+prefix+'-"]').forEach(el=>{
+    el.style.display = el.id === prefix+'-'+tabId ? '' : 'none';
+  });
+  view.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.getAttribute('onclick').includes(tabId));
+  });
+}
+
+// ═══ DASHBOARD ═══
+function renderDashboard() {
+  const total = DB.trainees.length;
+  const active = DB.trainees.filter(t=>t.status==='Active').length;
+  const nesting = DB.trainees.filter(t=>t.status==='Nesting').length;
+  const terminated = DB.trainees.filter(t=>t.status==='Terminated').length;
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-active').textContent = active;
+  document.getElementById('s-nesting').textContent = nesting;
+  document.getElementById('s-terminated').textContent = terminated;
+
+  const atRisk = DB.trainees.filter(t=>t.status==='Active'&&absCount(t.id)===2);
+  const alertBox = document.getElementById('alert-box');
+  if (atRisk.length) {
+    alertBox.classList.add('show');
+    document.getElementById('alert-list').innerHTML =
+      atRisk.map(t=>`→ ${t.first} ${t.last} (${t.bio}) — ${getBatch(t.batch_id).name||''}`).join('<br>');
+  } else {
+    alertBox.classList.remove('show');
+  }
+
+  document.getElementById('dash-tbody').innerHTML = DB.trainees.map(t=>{
+    const b = getBatch(t.batch_id);
+    const d = getDept(b.dept_id);
+    const ab=absCount(t.id), qf=quizFails(t.id), rf=rpFails(t.id);
+    return `<tr>
+      <td class="mono">${t.bio}</td>
+      <td class="name-cell">${t.first} ${t.last}</td>
+      <td>${b.name||'—'}</td>
+      <td>${d.name||'—'}</td>
+      <td><div class="risk-dots">${dots(ab,'abs')}<span class="risk-text">${ab}/3</span></div></td>
+      <td><div class="risk-dots">${dots(qf,'quiz')}<span class="risk-text">${qf}/3</span></div></td>
+      <td><div class="risk-dots">${dots(rf,'rp')}<span class="risk-text">${rf}/3</span></div></td>
+      <td>${badge(t.status)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══ TRAINEES ═══
+function renderTrainees() {
+  // populate filter dropdowns once
+  const bf = document.getElementById('f-batch');
+  const df = document.getElementById('f-dept');
+  if (bf.options.length<=1) {
+    DB.batches.forEach(b=>{const o=document.createElement('option');o.value=b.id;o.textContent=b.name;bf.appendChild(o);});
+    DB.departments.forEach(d=>{const o=document.createElement('option');o.value=d.id;o.textContent=d.name;df.appendChild(o);});
+  }
+  // populate attendance filter too
+  const af = document.getElementById('af-trainee');
+  if (af.options.length<=1) {
+    DB.trainees.forEach(t=>{const o=document.createElement('option');o.value=t.id;o.textContent=`${t.first} ${t.last}`;af.appendChild(o);});
+  }
+
+  const search  = document.getElementById('f-name').value.toLowerCase();
+  const statusF = document.getElementById('f-status').value;
+  const batchF  = document.getElementById('f-batch').value;
+  const deptF   = document.getElementById('f-dept').value;
+
+  const filtered = DB.trainees.filter(t=>{
+    const full = `${t.first} ${t.last} ${t.bio}`.toLowerCase();
+    const b = getBatch(t.batch_id);
+    if (search && !full.includes(search)) return false;
+    if (statusF && t.status !== statusF) return false;
+    if (batchF  && t.batch_id !== parseInt(batchF)) return false;
+    if (deptF   && b.dept_id !== parseInt(deptF)) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('trainee-tbody');
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">🔍</div>No trainees match your filters</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(t=>{
+    const b=getBatch(t.batch_id), d=getDept(b.dept_id);
+    return `<tr>
+      <td class="mono">${t.bio}</td>
+      <td class="name-cell">${t.first} ${t.last}</td>
+      <td>${b.name||'—'}</td>
+      <td>${d.name||'—'}</td>
+      <td>${badge(t.status)}</td>
+      <td><div class="act-btns">
+        <button class="icon-btn" title="Edit" onclick="editTrainee(${t.id})">✏</button>
+        <button class="icon-btn del" title="Delete" onclick="delTrainee(${t.id})">✕</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══ BATCHES ═══
+function renderBatches() {
+  document.getElementById('batch-tbody').innerHTML = DB.batches.map(b=>{
+    const d=getDept(b.dept_id), tr=getTrainer(b.trainer_id);
+    const count=DB.trainees.filter(t=>t.batch_id===b.id).length;
+    return `<tr>
+      <td class="name-cell">${b.name}</td>
+      <td>${d.name||'—'}</td>
+      <td>${tr.name||'—'}</td>
+      <td class="mono">${b.start}</td>
+      <td class="mono">${b.end}</td>
+      <td>${d.weeks} weeks</td>
+      <td style="color:#4e8ef7;font-weight:700">${count}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══ ATTENDANCE ═══
+function renderAttendance() {
+  const tF = document.getElementById('af-trainee').value;
+  const sF = document.getElementById('af-status').value;
+  let recs = [...DB.attendance];
+  if (tF) recs = recs.filter(a=>a.tid===parseInt(tF));
+  if (sF) recs = recs.filter(a=>a.status===sF);
+  recs.sort((a,b)=>b.date.localeCompare(a.date));
+
+  const colorMap = {Present:'#2dba8c',Absent:'#e85d5d',Late:'#f5a623',Excused:'#8a92a0'};
+  document.getElementById('att-tbody').innerHTML = recs.map(a=>{
+    const t=getTrainee(a.tid), b=getBatch(t.batch_id);
+    const runAbs = DB.attendance.filter(x=>x.tid===a.tid&&x.status==='Absent'&&x.date<=a.date).length;
+    const absColor = runAbs>=3?'#e85d5d':runAbs===2?'#f5a623':'#8a92a0';
+    return `<tr>
+      <td class="mono">${a.date}</td>
+      <td class="name-cell">${t.first} ${t.last}</td>
+      <td class="mono">${t.bio}</td>
+      <td>${b.name||'—'}</td>
+      <td><span style="color:${colorMap[a.status]};font-weight:700">${a.status}</span></td>
+      <td><span style="color:${absColor};font-family:monospace">${runAbs} / 3</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══ QUIZZES ═══
+function renderQuizzes() {
+  document.getElementById('quiz-def-tbody').innerHTML = DB.quizzes.map(q=>{
+    const b=getBatch(q.batch_id);
+    return `<tr>
+      <td class="name-cell">${q.name}</td>
+      <td>${b.name||'—'}</td>
+      <td class="mono">${q.date}</td>
+      <td class="mono">${q.pass_score}%</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('quiz-att-tbody').innerHTML = DB.quiz_attempts.map(a=>{
+    const t=getTrainee(a.tid), q=getQuiz(a.qid);
+    return `<tr>
+      <td class="name-cell">${t.first} ${t.last}</td>
+      <td>${q.name||'—'}</td>
+      <td class="mono">${a.score}%</td>
+      <td>${resBadge(a.result)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══ ROLE PLAYS ═══
+function renderRolePlays() {
+  document.getElementById('rp-def-tbody').innerHTML = DB.role_plays.map(r=>{
+    const b=getBatch(r.batch_id);
+    return `<tr>
+      <td class="name-cell">${r.name}</td>
+      <td>${b.name||'—'}</td>
+      <td class="mono">${r.date}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('rp-att-tbody').innerHTML = DB.rp_attempts.map(a=>{
+    const t=getTrainee(a.tid), r=getRP(a.rpid);
+    return `<tr>
+      <td class="name-cell">${t.first} ${t.last}</td>
+      <td>${r.name||'—'}</td>
+      <td>${resBadge(a.result)}</td>
+      <td style="color:#8a92a0;font-size:12px">${a.feedback||'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══ TEST CALLS ═══
+function renderTestCalls() {
+  const rc={Quality:'#f5a623',Language:'#4e8ef7',Both:'#e85d5d'};
+  document.getElementById('tc-tbody').innerHTML = DB.test_calls.map(tc=>{
+    const t=getTrainee(tc.tid);
+    return `<tr>
+      <td class="name-cell">${t.first} ${t.last}</td>
+      <td style="color:#4e8ef7;font-weight:700">Attempt ${tc.attempt}</td>
+      <td class="mono">${tc.date}</td>
+      <td>${resBadge(tc.result)}</td>
+      <td>${tc.reason?`<span style="color:${rc[tc.reason]};font-weight:600">${tc.reason}</span>`:'<span style="color:#b0b8c4">—</span>'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══ CRUD ═══
+let editId = null;
+
+function openAdd() {
+  editId = null;
+  document.getElementById('modal-title').textContent = 'Add New Trainee';
+  document.getElementById('save-btn').textContent = 'Save Trainee';
+  document.getElementById('m-bio').value = '';
+  document.getElementById('m-first').value = '';
+  document.getElementById('m-last').value = '';
+  document.getElementById('m-status').value = 'Active';
+  const sel = document.getElementById('m-batch');
+  sel.innerHTML = DB.batches.map(b=>`<option value="${b.id}">${b.name}</option>`).join('');
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function editTrainee(id) {
+  const t = getTrainee(id);
+  editId = id;
+  document.getElementById('modal-title').textContent = 'Edit Trainee';
+  document.getElementById('save-btn').textContent = 'Update';
+  document.getElementById('m-bio').value = t.bio;
+  document.getElementById('m-first').value = t.first;
+  document.getElementById('m-last').value = t.last;
+  document.getElementById('m-status').value = t.status;
+  const sel = document.getElementById('m-batch');
+  sel.innerHTML = DB.batches.map(b=>`<option value="${b.id}"${b.id===t.batch_id?' selected':''}>${b.name}</option>`).join('');
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function saveTrainee() {
+  const bio   = document.getElementById('m-bio').value.trim();
+  const first = document.getElementById('m-first').value.trim();
+  const last  = document.getElementById('m-last').value.trim();
+  const bid   = parseInt(document.getElementById('m-batch').value);
+  const status= document.getElementById('m-status').value;
+  if (!bio||!first||!last) { alert('Please fill in all fields.'); return; }
+
+  if (editId) {
+    const t = getTrainee(editId);
+    Object.assign(t, {bio,first,last,batch_id:bid,status});
+  } else {
+    DB.trainees.push({id:DB.nextId++, bio, first, last, batch_id:bid, status});
+  }
+  closeModal();
+  renderTrainees();
+  renderDashboard();
+}
+
+function delTrainee(id) {
+  if (!confirm('Remove this trainee?')) return;
+  const i = DB.trainees.findIndex(t=>t.id===id);
+  if (i>=0) DB.trainees.splice(i,1);
+  renderTrainees();
+  renderDashboard();
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+document.getElementById('modal-overlay').addEventListener('click', e=>{
+  if (e.target===document.getElementById('modal-overlay')) closeModal();
+});
+
+// ═══ INIT ═══
+renderDashboard();
+</script>
+</body>
+</html>
