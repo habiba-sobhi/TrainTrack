@@ -313,30 +313,6 @@ No installation required.
 
 ---
 
-# 📸 Screenshots
-
-## Dashboard
-
-Add screenshot here:
-
-```markdown
-![Dashboard](screenshots/dashboard.png)
-```
-
-## Trainee Management
-
-```markdown
-![Trainee Management](screenshots/trainee-management.png)
-```
-
-## Reports
-
-```markdown
-![Reports](screenshots/reports.png)
-```
-
----
-
 # 🎓 Learning Outcomes
 
 Through this project I gained practical experience in:
@@ -358,8 +334,7 @@ Through this project I gained practical experience in:
 
 Computer Science Student
 Alexandria National University
-
-Student ID: 2306009
+LinkedIn: https://www.linkedin.com/in/habiba-sobhi-b85b80352/
 
 ### Skills Demonstrated
 
