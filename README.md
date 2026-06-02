@@ -334,6 +334,7 @@ Through this project I gained practical experience in:
 
 Computer Science Student
 Alexandria National University
+
 LinkedIn: https://www.linkedin.com/in/habiba-sobhi-b85b80352/
 
 ### Skills Demonstrated
